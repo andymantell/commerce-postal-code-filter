@@ -1,0 +1,7 @@
+name = Commerce Postcode Blacklist
+description = Provides postcode Blacklisting functionality, allowing you to specify postcodes which cannot complete checkout
+core = 7.x
+package = Commerce (contrib)
+dependencies[] = commerce_checkout
+dependencies[] = addressfield
+configure = admin/commerce/config/postcode-blacklist
