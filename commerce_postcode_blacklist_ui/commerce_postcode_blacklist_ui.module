@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Main module file for Commerce postcode blacklist User interface
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_postcode_blacklist_ui_menu() {
+
+  $items = array();
+
+  $items['admin/commerce/config/postcode-blacklist'] = array(
+    'title' => 'Postcode blacklist',
+    'description' => 'Administer the postcode blacklist.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commerce_postcode_blacklist_ui_configure'),
+    'type' => MENU_NORMAL_ITEM,
+    'access arguments' => array('configure postcode blacklist'),
+    'file' => 'commerce_postcode_blacklist_ui.admin.inc',
+  );
+
+  return $items;
+
+}
+
+/**
+ * Implements hook_permission().
+ */
+function commerce_postcode_blacklist_ui_permission() {
+  return array(
+    'configure postcode blacklist' => array(
+      'title' => t('Configure postcode blacklist'),
+      'description' => t('Edit the list of postcodes on the blacklist.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_commerce_postcode_blacklist_postcodes().
+ *
+ * Fetch the postcodes from the variable and return them to the core module
+ *
+ * @return array List of postcodes to blacklist
+ */
+function commerce_postcode_blacklist_ui_commerce_postcode_blacklist_postcodes() {
+
+  $blacklist = variable_get('commerce_postcode_blacklist', '');
+  return explode(',', $blacklist);
+
+}

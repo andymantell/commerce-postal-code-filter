@@ -6,58 +6,26 @@
  */
 
 /**
- * Implements hook_menu().
- */
-function commerce_postcode_blacklist_menu() {
-
-  $items = array();
-
-  $items['admin/commerce/config/postcode-blacklist'] = array(
-    'title' => 'Postcode blacklist',
-    'description' => 'Administer the postcode blacklist.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('commerce_postcode_blacklist_configure'),
-    'type' => MENU_NORMAL_ITEM,
-    'access arguments' => array('configure postcode blacklist'),
-    'file' => 'commerce_postcode_blacklist.admin.inc',
-  );
-
-  return $items;
-
-}
-
-/**
- * Implements hook_permission().
- */
-function commerce_postcode_blacklist_permission() {
-  return array(
-    'configure postcode blacklist' => array(
-      'title' => t('Configure postcode blacklist'),
-      'description' => t('Edit the list of postcodes on the blacklist.'),
-    ),
-  );
-}
-
-/**
- * Implements hook_commerce_checkout_pane_info_alter().
+ * Main validation function. Used by checkout validation process but is
+ * abstracted enough that it could be used elsewhere if necessary.
  *
- * Add a validation routine onto the billing pane
+ * @param string $postcode Postcode to validate.
+ * @return bool Whether the postcode is valid or not.
  */
-function commerce_postcode_blacklist_commerce_checkout_pane_info_alter(&$checkout_panes) {
+function _commerce_postcode_blacklist_postcode_is_valid($postcode) {
 
-  $checkout_panes['customer_profile_billing']['callbacks']['checkout_form_validate'] = '_commerce_postcode_blacklist_validate_postcode';
+  // Convert the postcode to uppercase.
+  $postcode = strtoupper($postcode);
 
-}
+  // And strip any whitespace from it.
+  $postcode = preg_replace('/\s+/', '', $postcode);
 
-/**
- * Validation callback for the billing pane on the checkout form
- */
-function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $checkout_pane) {
-
-  $langcode = $form['customer_profile_billing']['commerce_customer_address']['#language'];
-
-  // Fetch our array of blacklisted postcodes.
-  $blacklist = variable_get('commerce_postcode_blacklist', '');
+  // Collect up postcodes from all modules exposing them.
+  $blacklist = array();
+  foreach (module_implements('commerce_postcode_blacklist_postcodes') as $module) {
+    $results = module_invoke($module, 'commerce_postcode_blacklist_postcodes');
+    $blacklist = array_unique(array_merge($blacklist, $results));
+  }
 
   // If the blacklist doesn't containing any postcodes, then return TRUE,
   // the postcode must be valid.
@@ -65,30 +33,11 @@ function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $c
     return TRUE;
   }
 
-  // Explode the list of postcodes into an array.
-  $blacklist = explode(',', $blacklist);
-
-  // Grab the postcode from the form state.
-  $postcode = $form_state['values']['customer_profile_billing']['commerce_customer_address'][$langcode][0]['postal_code'];
-
-  // Convert it to uppercase.
-  $postcode = strtoupper($postcode);
-
-  // And strip any whitespace from it.
-  $postcode = preg_replace('/\s+/', '', $postcode);
-
   // Check the postcode against each postcode in our blacklist.
   // We are checking for partial matches, i.e. if the submitted postcode
   // *begins with* the blacklisted item.
   foreach ($blacklist as $blacklisted_item) {
     if (strpos($postcode, $blacklisted_item) !== FALSE) {
-      form_set_error(
-        sprintf(
-          'customer_profile_billing][commerce_customer_address][%s][0][postal_code',
-          $langcode
-        ),
-        variable_get('commerce_postcode_blacklist_message', t('We do not deliver to this postcode'))
-      );
       return FALSE;
     }
   }
@@ -97,3 +46,43 @@ function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $c
   return TRUE;
 
 }
+
+/**
+ * Implements hook_commerce_checkout_pane_info_alter().
+ *
+ * Add a validation routine onto the billing pane
+ */
+function commerce_postcode_blacklist_commerce_checkout_pane_info_alter(&$checkout_panes) {
+  $checkout_panes['customer_profile_billing']['callbacks']['checkout_form_validate'] = '_commerce_postcode_blacklist_validate_checkout_pane';
+}
+
+/**
+ * Form validation callback for the billing pane on the checkout form
+ */
+function _commerce_postcode_blacklist_validate_checkout_pane(&$form, &$form_state, $checkout_pane) {
+
+  $langcode = $form['customer_profile_billing']['commerce_customer_address']['#language'];
+
+  // Grab the postcode from the form state.
+  $postcode = $form_state['values']['customer_profile_billing']['commerce_customer_address'][$langcode][0]['postal_code'];
+
+  if (_commerce_postcode_blacklist_postcode_is_valid($postcode)) {
+
+    return TRUE;
+
+  } else {
+
+    form_set_error(
+      sprintf(
+        'customer_profile_billing][commerce_customer_address][%s][0][postal_code',
+        $langcode
+      ),
+      variable_get('commerce_postcode_blacklist_message', t('We do not deliver to this postcode'))
+    );
+
+    return FALSE;
+
+  }
+
+}
+

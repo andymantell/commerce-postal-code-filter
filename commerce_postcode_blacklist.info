@@ -4,4 +4,3 @@ core = 7.x
 package = Commerce (contrib)
 dependencies[] = commerce_checkout
 dependencies[] = addressfield
-configure = admin/commerce/config/postcode-blacklist

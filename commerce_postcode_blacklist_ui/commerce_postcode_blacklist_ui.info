@@ -1,0 +1,6 @@
+name = User Interface for Commerce Postcode Blacklist
+description = User Interface for Commerce Postcode Blacklist module
+core = 7.x
+package = Commerce (contrib)
+dependencies[] = commerce_postcode_blacklist
+configure = admin/commerce/config/postcode-blacklist
