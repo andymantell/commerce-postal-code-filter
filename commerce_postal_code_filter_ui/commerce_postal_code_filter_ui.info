@@ -1,4 +1,4 @@
-name = User Interface for Commerce Postal code Filter
+name = Commerce Postal code Filter UI
 description = User Interface for Commerce Postal code Filter module
 core = 7.x
 package = Commerce (contrib)

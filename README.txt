@@ -1,13 +1,40 @@
-Provides postcode blacklisting and whitelisting functionality for
-Drupal Commerce, allowing you to specify full or partial postcodes which
-can or cannot complete checkout. This might be used for example if you did no
-want to deliver to certain areas of the country.
+Commerce Postcode Filter
+------------------------
+Postal code filtering functionality for the Drupal Commerce checkout process.
+This module provides 2 main modes (whitelisting and blacklisting) which allow
+shop owners to restrict the areas of a country that they deliver to:
 
-Planned features:
+Blacklisting
+------------
+If a customer tries to complete checkout with a postcode that is on the
+blacklist, they will be prevented from doing so. This allows shop owners to
+exclude a certain part of the country.
 
-* Store blocked postcodes in a table instead of a comma separated variable
-(Features integration?)
-* CSV import of postcodes
-* Whitelisting in addition the current blacklisting mode
+Whitelisting
+------------
+If a customer tries to complete checkout with a postcode that is not on the
+whitelist, they will be prevented from doing so. This allows shop owners to
+include only a small part of the country (e.g. they may wish only to accept
+orders from their locality. A whitelist allows them to do so without needing to
+exhaustively list all the postal codes that they do not accept)
 
-Module development sponsored by Modular Digital (http://wearemodular.co.uk)
+Partial matches
+---------------
+Matches in both modes are done on partial postcodes, so the blacklist could
+contain "PL" which would prevent the postcode PL5 4AB from being submitted.
+Similarly you could whitelist only the "PL" postal code, which would prevent
+the postcode "BS3 4BC" from being submitted.
+
+Optional user interface
+-----------------------
+The postcode list and error message can be edited by users with the
+appropriate permission with the optional user interface. Alternatively, module
+developers can implement a hook to provide this module with the list of
+postcodes to filter.
+
+Postcode checking block
+-----------------------
+The core module exposes a postcode checking block allowing customers to check
+their postcode before proceeding to the checkout.
+
+This module depends on Drupal Commerce.
