@@ -48,7 +48,7 @@ function commerce_postcode_blacklist_configure() {
 function commerce_postcode_blacklist_configure_submit($form, &$form_state) {
 
   // Fetch the blacklist from the form state and force it to be uppercase.
-  $blacklist = strtoupper($form_state['values']['commerce_postcode_blacklist']);
+  $blacklist = drupal_strtoupper($form_state['values']['commerce_postcode_blacklist']);
 
   // Remove all whitespace.
   $blacklist = preg_replace('/\s+/', '', $blacklist);
