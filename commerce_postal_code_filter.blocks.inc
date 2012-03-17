@@ -26,10 +26,9 @@ function commerce_postal_code_filter_block_info() {
  */
 function commerce_postal_code_filter_block_view($delta = '') {
 
-  switch($delta) {
+  switch ($delta) {
 
     case 'delivery-check':
-
       return array(
         'subject' => t('Do we deliver to your area?'),
         'content' => array(
@@ -52,10 +51,9 @@ function commerce_postal_code_filter_block_view($delta = '') {
  */
 function commerce_postal_code_filter_block_configure($delta = '') {
 
-  switch($delta) {
+  switch ($delta) {
 
     case 'delivery-check':
-
       $form = array();
 
       $form['commerce_postal_code_filter_block_error_message'] = array(
@@ -87,10 +85,9 @@ function commerce_postal_code_filter_block_configure($delta = '') {
  */
 function commerce_postal_code_filter_block_save($delta = '', $edit = array()) {
 
-  switch($delta) {
+  switch ($delta) {
 
     case 'delivery-check':
-
       variable_set('commerce_postal_code_filter_block_success_message', $edit['commerce_postal_code_filter_block_success_message']);
       variable_set('commerce_postal_code_filter_block_error_message', $edit['commerce_postal_code_filter_block_error_message']);
 
