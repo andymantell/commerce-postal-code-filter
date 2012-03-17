@@ -59,10 +59,8 @@ function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $c
   // Fetch our array of blacklisted postcodes.
   $blacklist = variable_get('commerce_postcode_blacklist', '');
 
-  /**
-   * If the blacklist doesn't containing any postcodes, then return TRUE,
-   * the postcode must be valid.
-   */
+  // If the blacklist doesn't containing any postcodes, then return TRUE,
+  // the postcode must be valid.
   if (empty($blacklist)) {
     return TRUE;
   }
@@ -80,7 +78,8 @@ function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $c
   $postcode = preg_replace('/\s+/', '', $postcode);
 
   // Check the postcode against each postcode in our blacklist.
-  // We are checking for partial matches, i.e. if the submitted postcode *begins with* the blacklisted item.
+  // We are checking for partial matches, i.e. if the submitted postcode
+  // *begins with* the blacklisted item.
   foreach ($blacklist as $blacklisted_item) {
     if (strpos($postcode, $blacklisted_item) !== FALSE) {
       form_set_error(

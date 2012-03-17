@@ -16,14 +16,15 @@ function commerce_postcode_blacklist_configure() {
     '#type' => 'textarea',
     '#title' => t('Postcode blacklist'),
     '#description' => t('Blacklisted postcodes, comma seperated. Partial postcodes are supported, e.g. PL, EX5'),
-    // Add spaces between the commas when displayed in the form, these are removed again on submit.
+    // Add spaces between the commas when displayed in the form.
+    // These are removed again on submit.
     '#default_value' => str_replace(
       ',',
       ', ',
       variable_get('commerce_postcode_blacklist', '')
     ),
   );
-  
+
   $form['commerce_postcode_blacklist_message'] = array(
     '#type' => 'textfield',
     '#title' => t('Error message'),
@@ -54,7 +55,7 @@ function commerce_postcode_blacklist_configure_submit($form, &$form_state) {
 
   // Save it to our variable.
   variable_set('commerce_postcode_blacklist', $blacklist);
-  
+
   // Save the error message to a variable.
   variable_set('commerce_postcode_blacklist_message', $form_state['values']['commerce_postcode_blacklist_message']);
 
