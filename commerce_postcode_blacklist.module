@@ -9,8 +9,11 @@
  * Main validation function. Used by checkout validation process but is
  * abstracted enough that it could be used elsewhere if necessary.
  *
- * @param string $postcode Postcode to validate.
- * @return bool Whether the postcode is valid or not.
+ * @param string $postcode
+ *  Postcode to validate.
+ *
+ * @return bool
+ *  Whether the postcode is valid or not.
  */
 function _commerce_postcode_blacklist_postcode_is_valid($postcode) {
 
@@ -67,10 +70,9 @@ function _commerce_postcode_blacklist_validate_checkout_pane(&$form, &$form_stat
   $postcode = $form_state['values']['customer_profile_billing']['commerce_customer_address'][$langcode][0]['postal_code'];
 
   if (_commerce_postcode_blacklist_postcode_is_valid($postcode)) {
-
     return TRUE;
-
-  } else {
+  }
+  else {
 
     form_set_error(
       sprintf(
@@ -85,4 +87,3 @@ function _commerce_postcode_blacklist_validate_checkout_pane(&$form, &$form_stat
   }
 
 }
-

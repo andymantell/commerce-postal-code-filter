@@ -43,7 +43,8 @@ function commerce_postcode_blacklist_ui_permission() {
  *
  * Fetch the postcodes from the variable and return them to the core module
  *
- * @return array List of postcodes to blacklist
+ * @return array
+ *  List of postcodes to blacklist
  */
 function commerce_postcode_blacklist_ui_commerce_postcode_blacklist_postcodes() {
 
