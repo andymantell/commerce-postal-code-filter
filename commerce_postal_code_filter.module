@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @file
+ * Main module file for Commerce postal code filter
+ */
+
+/**
+ * Main validation function. Used by checkout validation process but is
+ * abstracted enough that it could be used elsewhere if necessary.
+ *
+ * @param string $postal_code
+ *   Postal code to validate.
+ *
+ * @return bool
+ *   Whether the postal code is valid or not.
+ */
+function _commerce_postal_code_filter_postal_code_is_valid($postal_code) {
+
+  // Convert the postal code to uppercase.
+  $postal_code = strtoupper($postal_code);
+
+  // And strip any whitespace from it.
+  $postal_code = preg_replace('/\s+/', '', $postal_code);
+
+  // Collect up postal codes from all modules exposing them.
+  $postal_codes = array();
+  foreach (module_implements('commerce_postal_code_filter_postal_codes') as $module) {
+    $results = module_invoke($module, 'commerce_postal_code_filter_postal_codes');
+    $postal_codes = array_unique(array_merge($postal_codes, $results));
+  }
+
+  // If the filter list doesn't containing any postal codes, then return TRUE,
+  // the postal code must be valid.
+  if (empty($postal_codes)) {
+    return TRUE;
+  }
+
+  // Check the postal code against each postal code in our filter list.
+  // We are checking for partial matches, i.e. if the submitted postal code
+  // *begins with* the blacklisted item.
+  foreach ($postal_codes as $blacklisted_item) {
+    if (strpos($postal_code, $blacklisted_item) !== FALSE) {
+      return FALSE;
+    }
+  }
+
+  // If we've made it this far, the postal code must be valid.
+  return TRUE;
+
+}
+
+/**
+ * Implements hook_commerce_checkout_pane_info_alter().
+ *
+ * Add a validation routine onto the billing pane
+ */
+function commerce_postal_code_filter_commerce_checkout_pane_info_alter(&$checkout_panes) {
+  $checkout_panes['customer_profile_billing']['callbacks']['checkout_form_validate'] = '_commerce_postal_code_filter_validate_checkout_pane';
+}
+
+/**
+ * Form validation callback for the billing pane on the checkout form
+ */
+function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_state, $checkout_pane) {
+
+  $langcode = $form['customer_profile_billing']['commerce_customer_address']['#language'];
+
+  // Grab the postal code from the form state.
+  $postal_code = $form_state['values']['customer_profile_billing']['commerce_customer_address'][$langcode][0]['postal_code'];
+
+  if (_commerce_postal_code_filter_postal_code_is_valid($postal_code)) {
+    return TRUE;
+  }
+  else {
+
+    form_set_error(
+      sprintf(
+        'customer_profile_billing][commerce_customer_address][%s][0][postal_code',
+        $langcode
+      ),
+      variable_get('commerce_postal_code_filter_message', t('We do not deliver to this postal code'))
+    );
+
+    return FALSE;
+
+  }
+
+}

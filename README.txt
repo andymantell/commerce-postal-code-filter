@@ -1,7 +1,7 @@
-Provides postcode blacklisting functionality for Drupal Commerce, allowing you
-to specify full or partial postcodes which cannot complete checkout. This might
-be used for example if you did not want to deliver to certain areas of the
-country.
+Provides postcode blacklisting and whitelisting functionality for
+Drupal Commerce, allowing you to specify full or partial postcodes which
+can or cannot complete checkout. This might be used for example if you did no
+want to deliver to certain areas of the country.
 
 Planned features:
 
