@@ -5,6 +5,9 @@
  * Main module file for Commerce postal code filter
  */
 
+require_once('commerce_postal_code_filter.blocks.inc');
+require_once('commerce_postal_code_filter.forms.inc');
+
 /**
  * Main validation function. Used by checkout validation process but is
  * abstracted enough that it could be used elsewhere if necessary.
@@ -47,7 +50,7 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code) {
     if (strpos($postal_code, $filtered_item) !== FALSE) {
 
       // We've found a match, if we're blacklisting, return FALSE.
-      // If we're whitelisting, return TRUE
+      // If we're whitelisting, return TRUE.
       return ($mode == 'blacklist') ? FALSE : TRUE;
 
     }
