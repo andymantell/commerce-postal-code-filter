@@ -1,7 +1,12 @@
 <?php
 
 /**
- * Implements hook_menu
+ * @file
+ * Main module file for Commerce postcode blacklist
+ */
+
+/**
+ * Implements hook_menu().
  */
 function commerce_postcode_blacklist_menu() {
 
@@ -22,7 +27,7 @@ function commerce_postcode_blacklist_menu() {
 }
 
 /**
- * Implements hook_permission
+ * Implements hook_permission().
  */
 function commerce_postcode_blacklist_permission() {
   return array(
@@ -34,7 +39,7 @@ function commerce_postcode_blacklist_permission() {
 }
 
 /**
- * Implements hook_commerce_checkout_pane_info_alter
+ * Implements hook_commerce_checkout_pane_info_alter().
  *
  * Add a validation routine onto the billing pane
  */
@@ -51,36 +56,45 @@ function _commerce_postcode_blacklist_validate_postcode(&$form, &$form_state, $c
 
   $langcode = $form['customer_profile_billing']['commerce_customer_address']['#language'];
 
-  // Fetch our array of blacklisted postcodes
+  // Fetch our array of blacklisted postcodes.
   $blacklist = variable_get('commerce_postcode_blacklist', '');
 
-  // If the blacklist doesn't containing any postcodes, then return TRUE, the postcode must be valid
-  if(empty($blacklist)) {
+  /**
+   * If the blacklist doesn't containing any postcodes, then return TRUE,
+   * the postcode must be valid.
+   */
+  if (empty($blacklist)) {
     return TRUE;
   }
 
-  // Explode the list of postcodes into an array
+  // Explode the list of postcodes into an array.
   $blacklist = explode(',', $blacklist);
 
-  // Grab the postcode from the form state
+  // Grab the postcode from the form state.
   $postcode = $form_state['values']['customer_profile_billing']['commerce_customer_address'][$langcode][0]['postal_code'];
 
-  // Convert it to uppercase
+  // Convert it to uppercase.
   $postcode = strtoupper($postcode);
 
-  // And strip any whitespace from it
+  // And strip any whitespace from it.
   $postcode = preg_replace('/\s+/', '', $postcode);
 
-  // Check the postcode against each postcode in our blacklist
-  // We are checking for partial matches, i.e. if the submitted postcode *begins with* the blacklisted item
-  foreach($blacklist as $blacklisted_item) {
-    if(strpos($postcode, $blacklisted_item) !== FALSE) {
-      form_set_error(sprintf('customer_profile_billing][commerce_customer_address][%s][0][postal_code', $langcode), variable_get('commerce_postcode_blacklist_message', t('We do not deliver to this postcode')));
+  // Check the postcode against each postcode in our blacklist.
+  // We are checking for partial matches, i.e. if the submitted postcode *begins with* the blacklisted item.
+  foreach ($blacklist as $blacklisted_item) {
+    if (strpos($postcode, $blacklisted_item) !== FALSE) {
+      form_set_error(
+        sprintf(
+          'customer_profile_billing][commerce_customer_address][%s][0][postal_code',
+          $langcode
+        ),
+        variable_get('commerce_postcode_blacklist_message', t('We do not deliver to this postcode'))
+      );
       return FALSE;
     }
   }
 
-  // If we've made it this far, the postcode must be valid
+  // If we've made it this far, the postcode must be valid.
   return TRUE;
 
 }

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains form callback and submit function for the postcode admin form
+ */
+
+/**
  * Form callback for the postcode blacklist admin form
  */
 function commerce_postcode_blacklist_configure() {
@@ -11,7 +16,12 @@ function commerce_postcode_blacklist_configure() {
     '#type' => 'textarea',
     '#title' => t('Postcode blacklist'),
     '#description' => t('Blacklisted postcodes, comma seperated. Partial postcodes are supported, e.g. PL, EX5'),
-    '#default_value' => str_replace(',', ', ', variable_get('commerce_postcode_blacklist', '')),    // Add spaces between the commas when displayed in the form, these are removed again on submit
+    // Add spaces between the commas when displayed in the form, these are removed again on submit.
+    '#default_value' => str_replace(
+      ',',
+      ', ',
+      variable_get('commerce_postcode_blacklist', '')
+    ),
   );
   
   $form['commerce_postcode_blacklist_message'] = array(
@@ -36,16 +46,16 @@ function commerce_postcode_blacklist_configure() {
  */
 function commerce_postcode_blacklist_configure_submit($form, &$form_state) {
 
-  // Fetch the blacklist from the form state and force it to be uppercase
+  // Fetch the blacklist from the form state and force it to be uppercase.
   $blacklist = strtoupper($form_state['values']['commerce_postcode_blacklist']);
 
-  // Remove all whitespace
+  // Remove all whitespace.
   $blacklist = preg_replace('/\s+/', '', $blacklist);
 
-  // Save it to our variable
+  // Save it to our variable.
   variable_set('commerce_postcode_blacklist', $blacklist);
   
-  // Save the error message to a variable
+  // Save the error message to a variable.
   variable_set('commerce_postcode_blacklist_message', $form_state['values']['commerce_postcode_blacklist_message']);
 
 }
