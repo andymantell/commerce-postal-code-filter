@@ -51,7 +51,7 @@ function commerce_postal_code_filter_ui_configure() {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     '#title' => t('Delivery check block'),
-    '#description' => t('Message configuration options for the delivery check block, allowing customers to check postcodes before checking out.')
+    '#description' => t('Message configuration options for the delivery check block, allowing customers to check postcodes before checking out.'),
   );
 
   $form['commerce_postal_code_delivery_block']['commerce_postal_code_filter_block_error_message'] = array(
