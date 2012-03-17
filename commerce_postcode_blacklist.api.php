@@ -12,7 +12,7 @@
  * Postcodes can be full or partial, allowing whole areas to be blacklisted
  *
  * @return array
- *  List of postcodes to return
+ *   List of postcodes to return
  */
 function hook_commerce_postcode_blacklist_postcodes() {
   return array(

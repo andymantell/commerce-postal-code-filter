@@ -10,10 +10,10 @@
  * abstracted enough that it could be used elsewhere if necessary.
  *
  * @param string $postcode
- *  Postcode to validate.
+ *   Postcode to validate.
  *
  * @return bool
- *  Whether the postcode is valid or not.
+ *   Whether the postcode is valid or not.
  */
 function _commerce_postcode_blacklist_postcode_is_valid($postcode) {
 
