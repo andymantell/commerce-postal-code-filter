@@ -25,6 +25,18 @@ function commerce_postal_code_filter_ui_configure() {
     ),
   );
 
+  $form['commerce_postal_code_filter_mode'] = array(
+    '#type' => 'radios',
+    '#title' => t('Filter mode'),
+    '#required' => TRUE,
+    '#description' => t('Whether to "blacklist" or "whitelist" postcodes. If blacklisted, postcodes in the above filter will be prevented from completing checkout. If whitelisted, <em>only</em> postcodes that are in the above filter will be allowed to checkout'),
+    '#default_value' => variable_get('commerce_postal_code_filter_mode', 'blacklist'),
+    '#options' => array(
+      'blacklist' => t('Blacklist'),
+      'whitelist' => t('Whitelist'),
+    ),
+  );
+
   $form['commerce_postal_code_filter_message'] = array(
     '#type' => 'textfield',
     '#title' => t('Error message'),
@@ -55,8 +67,7 @@ function commerce_postal_code_filter_ui_configure_submit($form, &$form_state) {
 
   // Save it to our variable.
   variable_set('commerce_postal_code_filter_postal_codes', $postal_codes);
-
-  // Save the error message to a variable.
+  variable_set('commerce_postal_code_filter_mode', $form_state['values']['commerce_postal_code_filter_mode']);
   variable_set('commerce_postal_code_filter_message', $form_state['values']['commerce_postal_code_filter_message']);
 
 }
