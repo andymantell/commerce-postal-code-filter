@@ -16,10 +16,11 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
 
   $config = variable_get('commerce_postal_code_filter_config', array());
 
-  // If the form is being rebuilt with an existing $form_state use that instead
-  if(!empty($form_state['values']['countries'])) {
+  // If the form is being rebuilt with an existing $form_state use that instead.
+  if (!empty($form_state['values']['countries'])) {
     $enabled_countries = $form_state['values']['countries'];
-  } else {
+  }
+  else {
     $enabled_countries = $config['countries'];
   }
 
@@ -37,9 +38,9 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
     ),
   );
 
-  if(!empty($enabled_countries)) {
+  if (!empty($enabled_countries)) {
 
-    // Per country filter settings
+    // Per country filter settings.
     $form['country_filters'] = array(
       '#prefix' => '<div id="country-filters"><h2>' . t('Filter settings') . '</h2>',
       '#suffix' => '</div>',
@@ -49,7 +50,7 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
 
   }
 
-  foreach($enabled_countries as $country_code) {
+  foreach ($enabled_countries as $country_code) {
 
     $form['country_filters'][$country_code] = array(
       '#type' => 'fieldset',
@@ -89,7 +90,7 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
       ),
     );
 
-    // Disable or enable the shipping checkbox depending on whether the shipping module is enabled.
+    // Disable shipping checkbox if the shipping module isn't enabled.
     $form['country_filters'][$country_code]['filter_addresses']['customer_profile_shipping']['#disabled'] = !module_exists('commerce_shipping');
 
     $form['country_filters'][$country_code]['filter_message'] = array(
@@ -151,7 +152,7 @@ function commerce_postal_code_filter_configure_ajax_callback($form, $form_state)
  */
 function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
-  foreach($form_state['values']['country_filters'] as &$country_filter) {
+  foreach ($form_state['values']['country_filters'] as &$country_filter) {
 
     // Fetch the filter list from the form state and force it to be uppercase.
     $country_filter['postal_codes'] = drupal_strtoupper($country_filter['postal_codes']);
