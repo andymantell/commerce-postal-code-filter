@@ -2,7 +2,8 @@ Commerce Postcode Filter
 ------------------------
 Postal code filtering functionality for the Drupal Commerce checkout process.
 This module provides 2 main modes (whitelisting and blacklisting) which allow
-shop owners to restrict the areas of a country that they deliver to:
+shop owners to restrict the areas of a country that they deliver to. The admin
+form can be found at /admin/commerce/config/postal-code-filter
 
 Blacklisting
 ------------
@@ -29,6 +30,13 @@ Postcode checking block
 -----------------------
 The core module exposes a postcode checking block allowing customers to check
 their postcode before proceeding to the checkout.
+
+Features integration
+--------------------
+All module config is stored in a single variable called
+"commerce_postal_code_filter_config". Features integration is therefore
+afforded by use of the Strongarm and Features modules.
+(http://drupal.org/project/strongarm + http://drupal.org/project/features)
 
 Billing vs Shipping
 -------------------
