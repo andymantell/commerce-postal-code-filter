@@ -8,40 +8,85 @@
 /**
  * Form callback for the postal code filter admin form
  */
-function commerce_postal_code_filter_configure() {
+function commerce_postal_code_filter_configure($form, &$form_state) {
 
-  $form = array();
+  // Necessary for country_get_list().
+  require_once DRUPAL_ROOT . '/includes/locale.inc';
+  $countries = country_get_list();
 
   $config = variable_get('commerce_postal_code_filter_config', array());
 
-  $form['postal_codes'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Postal code filter'),
-    '#description' => t('Postal codes to be filtered, comma seperated. Partial postal codes are supported, e.g. PL, EX5'),
-    // Add spaces between the commas when displayed in the form.
-    // These are removed again on submit.
-    '#default_value' => empty($config['postal_codes']) ? '' : str_replace(',', ', ', $config['postal_codes']),
-  );
+  // If the form is being rebuilt with an existing $form_state use that instead
+  if(!empty($form_state['values']['countries'])) {
+    $enabled_countries = $form_state['values']['countries'];
+  } else {
+    $enabled_countries = $config['countries'];
+  }
 
-  $form['filter_mode'] = array(
-    '#type' => 'radios',
-    '#title' => t('Filter mode'),
-    '#required' => TRUE,
-    '#description' => t('Whether to "blacklist" or "whitelist" postcodes. If blacklisted, postcodes in the above filter will be prevented from completing checkout. If whitelisted, <em>only</em> postcodes that are in the above filter will be allowed to checkout'),
-    '#default_value' => empty($config['filter_mode']) ? 'blacklist' : $config['filter_mode'],
-    '#options' => array(
-      'blacklist' => t('Blacklist'),
-      'whitelist' => t('Whitelist'),
+  $form['countries'] = array(
+    '#title' => t('Enable postcode filtering for these countries'),
+    '#type' => 'select',
+    '#multiple' => TRUE,
+    '#options' => $countries,
+    '#default_value' => $enabled_countries,
+    '#ajax' => array(
+      'callback' => 'commerce_postal_code_filter_configure_ajax_callback',
+      'wrapper' => 'country-filters',
+      'method' => 'replace',
+      'effect' => 'fade',
     ),
   );
 
-  $form['filter_message'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Error message'),
-    '#required' => TRUE,
-    '#description' => t('Error message to display when a customer tries to use a filtered postal code'),
-    '#default_value' => empty($config['filter_message']) ? 'Sorry, We do not deliver to this postal code' : $config['filter_message'],
-  );
+  if(!empty($enabled_countries)) {
+
+    // Per country filter settings
+    $form['country_filters'] = array(
+      '#prefix' => '<div id="country-filters"><h2>' . t('Filter settings') . '</h2>',
+      '#suffix' => '</div>',
+      '#type' => 'vertical_tabs',
+      '#tree' => TRUE,
+    );
+
+  }
+
+  foreach($enabled_countries as $country_code) {
+
+    $form['country_filters'][$country_code] = array(
+      '#type' => 'fieldset',
+      '#title' => $countries[$country_code],
+      '#tree' => TRUE,
+    );
+
+    $form['country_filters'][$country_code]['postal_codes'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Postal code filter'),
+      '#description' => t('Postal codes to be filtered, comma seperated. Partial postal codes are supported, e.g. PL, EX5'),
+      // Add spaces between the commas when displayed in the form.
+      // These are removed again on submit.
+      '#default_value' => empty($config['country_filters'][$country_code]['postal_codes']) ? '' : str_replace(',', ', ', $config['country_filters'][$country_code]['postal_codes']),
+    );
+
+    $form['country_filters'][$country_code]['filter_mode'] = array(
+      '#type' => 'radios',
+      '#title' => t('Filter mode'),
+      '#required' => TRUE,
+      '#description' => t('Whether to "blacklist" or "whitelist" postcodes. If blacklisted, postcodes in the above filter will be prevented from completing checkout. If whitelisted, <em>only</em> postcodes that are in the above filter will be allowed to checkout'),
+      '#default_value' => empty($config['country_filters'][$country_code]['filter_mode']) ? 'blacklist' : $config['country_filters'][$country_code]['filter_mode'],
+      '#options' => array(
+        'blacklist' => t('Blacklist'),
+        'whitelist' => t('Whitelist'),
+      ),
+    );
+
+    $form['country_filters'][$country_code]['filter_message'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Error message'),
+      '#required' => TRUE,
+      '#description' => t('Error message to display when a customer tries to use a filtered postal code'),
+      '#default_value' => empty($config['country_filters'][$country_code]['filter_message']) ? 'Sorry, We do not deliver to this postal code' : $config['country_filters'][$country_code]['filter_message'],
+    );
+
+  }
 
   // Delivery block.
   $form['delivery_block'] = array(
@@ -49,7 +94,7 @@ function commerce_postal_code_filter_configure() {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     '#title' => t('Delivery check block'),
-    '#description' => t('Message configuration options for the delivery check block, allowing customers to check postcodes before checking out.'),
+    '#description' => t('Message configuration options for the delivery check block, allowing customers to check postcodes before checking out. These values are passed through the t() function allowing them to be translated in the usual fashion.'),
     '#tree' => TRUE,
   );
 
@@ -79,15 +124,28 @@ function commerce_postal_code_filter_configure() {
 }
 
 /**
+ * Ajax callback for admin form
+ */
+function commerce_postal_code_filter_configure_ajax_callback($form, $form_state) {
+
+  return $form['country_filters'];
+
+}
+
+/**
  * Submit callback for the postal code filter admin form
  */
 function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
-  // Fetch the filter list from the form state and force it to be uppercase.
-  $form_state['values']['postal_codes'] = drupal_strtoupper($form_state['values']['postal_codes']);
+  foreach($form_state['values']['country_filters'] as &$country_filter) {
 
-  // Remove all whitespace.
-  $form_state['values']['postal_codes'] = preg_replace('/\s+/', '', $form_state['values']['postal_codes']);
+    // Fetch the filter list from the form state and force it to be uppercase.
+    $country_filter['postal_codes'] = drupal_strtoupper($country_filter['postal_codes']);
+
+    // Remove all whitespace.
+    $country_filter['postal_codes'] = preg_replace('/\s+/', '', $country_filter['postal_codes']);
+
+  }
 
   form_state_values_clean($form_state);
   variable_set('commerce_postal_code_filter_config', $form_state['values']);
