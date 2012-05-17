@@ -121,8 +121,13 @@ function commerce_postal_code_filter_block_save($delta = '', $edit = array()) {
   switch ($delta) {
 
     case 'delivery-check':
-      variable_set('commerce_postal_code_filter_block_success_message', $edit['commerce_postal_code_filter_block_success_message']);
-      variable_set('commerce_postal_code_filter_block_error_message', $edit['commerce_postal_code_filter_block_error_message']);
+
+      $config = variable_get('commerce_postal_code_filter_config', array());
+
+      $config['delivery_block']['success_message'] = $edit['commerce_postal_code_filter_block_success_message'];
+      $config['delivery_block']['error_message'] = $edit['commerce_postal_code_filter_block_error_message'];
+
+      variable_set('commerce_postal_code_filter_config', $config);
 
       break;
 
@@ -134,6 +139,8 @@ function commerce_postal_code_filter_block_save($delta = '', $edit = array()) {
  * Form callback for delivery check block
  */
 function commerce_postal_code_filter_delivery_check($form, &$form_state) {
+
+  $config = variable_get('commerce_postal_code_filter_config', array());
 
   $form['postal_code'] = array(
     '#type' => 'textfield',
@@ -149,10 +156,10 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
   if (!empty($form_state['values']['postal_code'])) {
 
     if (_commerce_postal_code_filter_postal_code_is_valid($form_state['values']['postal_code'])) {
-      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-valid">' . variable_get('commerce_postal_code_filter_block_success_message', 'Good news! We can deliver to this postal code.') . '</p>';
+      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-valid">' . empty($config['delivery_block']['success_message']) ? t('Good news! We can deliver to this postal code.') : $config['delivery_block']['success_message'] . '</p>';
     }
     else {
-      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-invalid">' . variable_get('commerce_postal_code_filter_block_error_message', 'Sorry, We do not deliver to this postal code.') . '</p>';
+      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-invalid">' . empty($config['delivery_block']['error_message']) ? t('Sorry, We do not deliver to this postal code.') : $config['delivery_block']['error_message'] . '</p>';
     }
   }
 
@@ -196,6 +203,8 @@ function commerce_postal_code_filter_delivery_check_ajax_callback($form, $form_s
  */
 function _commerce_postal_code_filter_postal_code_is_valid($postal_code) {
 
+  $config = variable_get('commerce_postal_code_filter_config', array());
+
   // Convert the postal code to uppercase.
   $postal_code = strtoupper($postal_code);
 
@@ -203,7 +212,7 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code) {
   $postal_code = preg_replace('/\s+/', '', $postal_code);
 
   // Fetch postal_codes from variable
-  $postal_codes = explode(',', variable_get('commerce_postal_code_filter_postal_codes', ''));
+  $postal_codes = explode(',', empty($config['postal_codes']) ? '' : $config['postal_codes']);
 
   // Regardless of the blacklist / whitelist mode, if the filter list doesn't
   // contain any postal codes, then return TRUE, the postal code must be valid.
@@ -211,7 +220,7 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code) {
     return TRUE;
   }
 
-  $mode = variable_get('commerce_postal_code_filter_mode', 'blacklist');
+  $mode = empty($config['filter_mode']) ? 'blacklist' : $config['filter_mode'];
 
   // Check the postal code against each postal code in our filter list.
   // We are checking for partial matches, i.e. if the submitted postal code
@@ -248,6 +257,7 @@ function commerce_postal_code_filter_commerce_checkout_pane_info_alter(&$checkou
 function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_state, $checkout_pane) {
 
   $langcode = $form['customer_profile_shipping']['commerce_customer_address']['#language'];
+  $config = variable_get('commerce_postal_code_filter_config', array());
 
   // Grab the postal code from the form state.
   $postal_code = $form_state['values']['customer_profile_shipping']['commerce_customer_address'][$langcode][0]['postal_code'];
@@ -262,7 +272,7 @@ function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_stat
         'customer_profile_shipping][commerce_customer_address][%s][0][postal_code',
         $langcode
       ),
-      variable_get('commerce_postal_code_filter_message', t('We do not deliver to this postal code'))
+      empty($config['filter_message']) ? t('We do not deliver to this postal code') : $config['filter_message']
     );
 
     return FALSE;
