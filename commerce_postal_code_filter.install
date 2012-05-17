@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install file for Commerce postal code filter
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function commerce_postal_code_filter_uninstall() {
+  variable_del('commerce_postal_code_filter_config');
+}
