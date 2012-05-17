@@ -274,20 +274,33 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code, $countr
  * Add a validation routine onto the shipping pane
  */
 function commerce_postal_code_filter_commerce_checkout_pane_info_alter(&$checkout_panes) {
-  $checkout_panes['customer_profile_shipping']['callbacks']['checkout_form_validate'] = '_commerce_postal_code_filter_validate_checkout_pane';
+
+  $checkout_panes['customer_profile_billing']['callbacks']['checkout_form_validate'] = '_commerce_postal_code_filter_validate_checkout_pane';
+
+  if(module_exists('commerce_shipping')) {
+    $checkout_panes['customer_profile_shipping']['callbacks']['checkout_form_validate'] = '_commerce_postal_code_filter_validate_checkout_pane';
+  }
+
 }
 
 /**
- * Form validation callback for the shipping pane on the checkout form
+ * Form validation callback for the shipping and billing panes on the checkout form
  */
 function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_state, $checkout_pane) {
 
-  $langcode = $form['customer_profile_shipping']['commerce_customer_address']['#language'];
+  $langcode = $form[$checkout_pane['pane_id']]['commerce_customer_address']['#language'];
   $config = variable_get('commerce_postal_code_filter_config', array());
 
+  // Grab the country code from the form state
+  $country_code = $form_state['values'][$checkout_pane['pane_id']]['commerce_customer_address'][$langcode][0]['country'];
+
+  // If the current country + pane combination isn't set to filter, return TRUE.
+  if(empty($config['country_filters'][$country_code]['filter_addresses'][$checkout_pane['pane_id']])) {
+    return TRUE;
+  }
+
   // Grab the postal code from the form state.
-  $postal_code = $form_state['values']['customer_profile_shipping']['commerce_customer_address'][$langcode][0]['postal_code'];
-  $country_code = $form_state['values']['customer_profile_shipping']['commerce_customer_address'][$langcode][0]['country'];
+  $postal_code = $form_state['values'][$checkout_pane['pane_id']]['commerce_customer_address'][$langcode][0]['postal_code'];
 
   if (_commerce_postal_code_filter_postal_code_is_valid($postal_code, $country_code)) {
     return TRUE;
@@ -296,7 +309,8 @@ function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_stat
 
     form_set_error(
       sprintf(
-        'customer_profile_shipping][commerce_customer_address][%s][0][postal_code',
+        '%s][commerce_customer_address][%s][0][postal_code',
+        $checkout_pane['pane_id'],
         $langcode
       ),
       empty($config['country_filters'][$country_code]['filter_message']) ? t('We do not deliver to this postal code') : $config['country_filters'][$country_code]['filter_message']

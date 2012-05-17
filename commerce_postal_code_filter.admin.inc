@@ -78,6 +78,20 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
       ),
     );
 
+    $form['country_filters'][$country_code]['filter_addresses'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Addresses to filter'),
+      '#description' => t('Which addresses should be filtered at checkout. Shipping requires commerce_shipping-2.x'),
+      '#default_value' => empty($config['country_filters'][$country_code]['filter_addresses']) ? array() : $config['country_filters'][$country_code]['filter_addresses'],
+      '#options' => array(
+        'customer_profile_billing' => t('Billing'),
+        'customer_profile_shipping' => t('Shipping'),
+      ),
+    );
+
+    // Disable or enable the shipping checkbox depending on whether the shipping module is enabled.
+    $form['country_filters'][$country_code]['filter_addresses']['customer_profile_shipping']['#disabled'] = !module_exists('commerce_shipping');
+
     $form['country_filters'][$country_code]['filter_message'] = array(
       '#type' => 'textfield',
       '#title' => t('Error message'),

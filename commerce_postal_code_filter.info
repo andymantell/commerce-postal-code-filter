@@ -3,5 +3,4 @@ description = Provides postal code Blacklisting & Whitelisting functionality, al
 core = 7.x
 package = Commerce (contrib)
 dependencies[] = commerce_checkout
-dependencies[] = commerce_shipping (2.x)
 configure = admin/commerce/config/postal-code-filter
