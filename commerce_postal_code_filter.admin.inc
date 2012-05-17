@@ -8,7 +8,7 @@
 /**
  * Form callback for the postal code filter admin form
  */
-function commerce_postal_code_filter_ui_configure() {
+function commerce_postal_code_filter_configure() {
 
   $form = array();
 
@@ -82,7 +82,7 @@ function commerce_postal_code_filter_ui_configure() {
 /**
  * Submit callback for the postal code filter admin form
  */
-function commerce_postal_code_filter_ui_configure_submit($form, &$form_state) {
+function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
   // Fetch the filter list from the form state and force it to be uppercase.
   $postal_codes = drupal_strtoupper($form_state['values']['commerce_postal_code_filter_postal_codes']);
