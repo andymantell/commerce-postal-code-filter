@@ -128,7 +128,7 @@ function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
   }
 
-  // Remove "active tab" value from form state
+  // Remove "active tab" value from form state.
   unset($form_state['values']['country_filters']['country_filters__active_tab']);
 
   form_state_values_clean($form_state);
