@@ -106,6 +106,7 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Postal code'),
     '#size' => 15,
+    '#required' => TRUE,
   );
 
   $form['postal_code_validity'] = array(
