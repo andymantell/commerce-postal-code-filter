@@ -93,41 +93,7 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
     // Disable shipping checkbox if the shipping module isn't enabled.
     $form['country_filters'][$country_code]['filter_addresses']['customer_profile_shipping']['#disabled'] = !module_exists('commerce_shipping');
 
-    $form['country_filters'][$country_code]['filter_message'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Error message'),
-      '#required' => TRUE,
-      '#description' => t('Error message to display when a customer tries to use a filtered postal code'),
-      '#default_value' => empty($config['country_filters'][$country_code]['filter_message']) ? 'Sorry, We do not deliver to this postal code' : $config['country_filters'][$country_code]['filter_message'],
-    );
-
   }
-
-  // Delivery block.
-  $form['delivery_block'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#title' => t('Delivery check block'),
-    '#description' => t('Message configuration options for the delivery check block, allowing customers to check postcodes before checking out. These values are passed through the t() function allowing them to be translated in the usual fashion.'),
-    '#tree' => TRUE,
-  );
-
-  $form['delivery_block']['error_message'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Error message'),
-    '#required' => TRUE,
-    '#description' => t('Error message to display when a customer checks a postcode that is not acceptable'),
-    '#default_value' => empty($config['delivery_block']['error_message']) ? 'Sorry, We do not deliver to this postal code.' : $config['delivery_block']['error_message'],
-  );
-
-  $form['delivery_block']['success_message'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Success message'),
-    '#required' => TRUE,
-    '#description' => t('Message to display when a customer checks a postcode that is acceptable'),
-    '#default_value' => empty($config['delivery_block']['success_message']) ? 'Good news! We can deliver to this postal code.' : $config['delivery_block']['success_message'],
-  );
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -161,6 +127,9 @@ function commerce_postal_code_filter_configure_submit($form, &$form_state) {
     $country_filter['postal_codes'] = preg_replace('/\s+/', '', $country_filter['postal_codes']);
 
   }
+
+  // Remove "active tab" value from form state
+  unset($form_state['values']['country_filters']['country_filters__active_tab']);
 
   form_state_values_clean($form_state);
   variable_set('commerce_postal_code_filter_config', $form_state['values']);

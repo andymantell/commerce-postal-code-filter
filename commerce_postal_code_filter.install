@@ -11,3 +11,22 @@
 function commerce_postal_code_filter_uninstall() {
   variable_del('commerce_postal_code_filter_config');
 }
+
+/**
+ * Remove custom strings from the configuration variable
+ */
+function commerce_postal_code_filter_update_7001() {
+  $config = variable_get('commerce_postal_code_filter_config', array());
+
+  unset($config['delivery_block']);
+
+  foreach($config['country_filters'] as &$country_filter) {
+    if(is_array($country_filter)) {
+      unset($country_filter['filter_message']);
+    }
+  }
+
+  variable_set('commerce_postal_code_filter_config', $config);
+
+  return t('Removed custom strings from configuration.');
+}

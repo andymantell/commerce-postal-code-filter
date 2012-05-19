@@ -66,70 +66,13 @@ function commerce_postal_code_filter_block_view($delta = '') {
         'subject' => t('Do we deliver to your area?'),
         'content' => array(
           'description' => array(
-            '#prefix' => '<p>',
-            '#markup' => t('Enter your postal code below and check to see if we deliver to your area.'),
-            '#suffix' => '</p>',
+            '#markup' => '<p>' . t('Enter your postal code below and check to see if we deliver to your area.') . '</p>',
           ),
           'delivery-check-form' => drupal_get_form('commerce_postal_code_filter_delivery_check'),
         ),
       );
 
       break;
-  }
-
-}
-
-/**
- * Implements hook_block_configure().
- */
-function commerce_postal_code_filter_block_configure($delta = '') {
-
-  switch ($delta) {
-
-    case 'delivery-check':
-      $form = array();
-
-      $form['commerce_postal_code_filter_block_error_message'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Error message'),
-        '#required' => TRUE,
-        '#description' => t('Error message to display when a customer checks a postcode that is not acceptable'),
-        '#default_value' => variable_get('commerce_postal_code_filter_block_error_message', 'Sorry, We do not deliver to this postal code.'),
-      );
-
-      $form['commerce_postal_code_filter_block_success_message'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Success message'),
-        '#required' => TRUE,
-        '#description' => t('Message to display when a customer checks a postcode that is acceptable'),
-        '#default_value' => variable_get('commerce_postal_code_filter_block_success_message', 'Good news! We can deliver to this postal code.'),
-      );
-
-      return $form;
-
-      break;
-
-  }
-
-}
-
-/**
- * Implements hook_block_save().
- */
-function commerce_postal_code_filter_block_save($delta = '', $edit = array()) {
-
-  switch ($delta) {
-
-    case 'delivery-check':
-      $config = variable_get('commerce_postal_code_filter_config', array());
-
-      $config['delivery_block']['success_message'] = $edit['commerce_postal_code_filter_block_success_message'];
-      $config['delivery_block']['error_message'] = $edit['commerce_postal_code_filter_block_error_message'];
-
-      variable_set('commerce_postal_code_filter_config', $config);
-
-      break;
-
   }
 
 }
@@ -146,21 +89,17 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
   $config = variable_get('commerce_postal_code_filter_config', array());
 
   if (count($config['countries']) > 1) {
-
     $form['country'] = array(
       '#type' => 'select',
       '#title' => t('Country'),
       '#options' => $countries,
     );
-
   }
   else {
-
     $form['country'] = array(
       '#type' => 'hidden',
       '#default_value' => reset($config['countries']),
     );
-
   }
 
   $form['postal_code'] = array(
@@ -175,12 +114,11 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
   );
 
   if (!empty($form_state['values']['postal_code'])) {
-
     if (_commerce_postal_code_filter_postal_code_is_valid($form_state['values']['postal_code'], $form_state['values']['country'])) {
-      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-valid">' . (empty($config['delivery_block']['success_message']) ? t('Good news! We can deliver to this postal code.') : t($config['delivery_block']['success_message'])) . '</p>';
+      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-valid">' . t('Good news! We can deliver to this postal code.') . '</p>';
     }
     else {
-      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-invalid">' . (empty($config['delivery_block']['error_message']) ? t('Sorry, We do not deliver to this postal code.') : t($config['delivery_block']['error_message'])) . '</p>';
+      $form['postal_code_validity']['#markup'] = '<p class="commerce-postcode-filter-invalid">' . t('Sorry, We do not deliver to this postal code.') . '</p>';
     }
   }
 
@@ -313,7 +251,7 @@ function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_stat
         $checkout_pane['pane_id'],
         $langcode
       ),
-      empty($config['country_filters'][$country_code]['filter_message']) ? t('We do not deliver to this postal code') : $config['country_filters'][$country_code]['filter_message']
+      t('We do not deliver to this postal code')
     );
 
     return FALSE;
