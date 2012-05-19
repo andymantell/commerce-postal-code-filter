@@ -20,8 +20,8 @@ function commerce_postal_code_filter_update_7001() {
 
   unset($config['delivery_block']);
 
-  foreach($config['country_filters'] as &$country_filter) {
-    if(is_array($country_filter)) {
+  foreach ($config['country_filters'] as &$country_filter) {
+    if (is_array($country_filter)) {
       unset($country_filter['filter_message']);
     }
   }
