@@ -85,7 +85,7 @@ function commerce_postal_code_filter_block_view($delta = '') {
 }
 
 /**
- * Form callback for delivery check block
+ * Form callback for delivery check block.
  */
 function commerce_postal_code_filter_delivery_check($form, &$form_state) {
 
@@ -146,22 +146,26 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
 }
 
 /**
- * Ajax callback for delivery check form
+ * Ajax callback for delivery check form.
  */
 function commerce_postal_code_filter_delivery_check_ajax_callback($form, $form_state) {
-
   return $form['postal_code_validity'];
-
 }
 
 /**
- * Main validation function. Used by checkout validation process but is
- * abstracted enough that it could be used elsewhere if necessary.
+ * Main postcode validation function.
+ *
+ * Used by checkout validation process and by delivery checking block.
+ * It is abstracted enough that it could be used elsewhere if necessary.
  * This function will either whitelist or blacklist postcodes based on the value
  * of "commerce_postal_code_filter_mode" variable ('whitelist' or 'blacklist')
+ * for the given country
  *
  * @param string $postal_code
  *   Postal code to validate.
+ *
+ * @param string $country_code
+ *   Two character ISO 3166-1 country code.
  *
  * @return bool
  *   Whether the postal code is valid or not.
@@ -201,7 +205,6 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code, $countr
       // We've found a match, if we're blacklisting, return FALSE.
       // If we're whitelisting, return TRUE.
       return ($mode == 'blacklist') ? FALSE : TRUE;
-
     }
   }
 

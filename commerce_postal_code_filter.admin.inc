@@ -6,7 +6,7 @@
  */
 
 /**
- * Form callback for the postal code filter admin form
+ * Form callback for the postal code filter admin form.
  */
 function commerce_postal_code_filter_configure($form, &$form_state) {
 
@@ -105,16 +105,14 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
 }
 
 /**
- * Ajax callback for admin form
+ * Ajax callback for admin form.
  */
 function commerce_postal_code_filter_configure_ajax_callback($form, $form_state) {
-
   return $form['country_filters'];
-
 }
 
 /**
- * Submit callback for the postal code filter admin form
+ * Submit callback for the postal code filter admin form.
  */
 function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
