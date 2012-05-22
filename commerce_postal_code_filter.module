@@ -157,9 +157,9 @@ function commerce_postal_code_filter_delivery_check_ajax_callback($form, $form_s
  *
  * Used by checkout validation process and by delivery checking block.
  * It is abstracted enough that it could be used elsewhere if necessary.
- * This function will either whitelist or blacklist postcodes based on the value
- * of "commerce_postal_code_filter_mode" variable ('whitelist' or 'blacklist')
- * for the given country
+ * This function will either whitelist or blacklist postcodes based on the
+ * value of "commerce_postal_code_filter_mode" variable ('whitelist' or
+ * 'blacklist') for the given country.
  *
  * @param string $postal_code
  *   Postal code to validate.
