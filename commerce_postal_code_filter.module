@@ -231,7 +231,7 @@ function commerce_postal_code_filter_commerce_checkout_pane_info_alter(&$checkou
 }
 
 /**
- * Form validation callback for shipping & billing panes on the checkout form
+ * Form validation callback for shipping & billing panes on the checkout form.
  */
 function _commerce_postal_code_filter_validate_checkout_pane(&$form, &$form_state, $checkout_pane) {
 
