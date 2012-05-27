@@ -82,7 +82,13 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
 
   $config = variable_get('commerce_postal_code_filter_config', array());
 
-  if (count($config['countries']) > 1) {
+  if (empty($config['countries'])) {
+    $form['country'] = array(
+      '#type' => 'hidden',
+      '#default_value' => NULL,
+    );
+  }
+  else if (count($config['countries']) > 1) {
     $form['country'] = array(
       '#type' => 'select',
       '#title' => t('Country'),

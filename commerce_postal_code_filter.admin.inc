@@ -20,8 +20,11 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
   if (!empty($form_state['values']['countries'])) {
     $enabled_countries = $form_state['values']['countries'];
   }
-  else {
+  else if (isset($config['countries'])) {
     $enabled_countries = $config['countries'];
+  }
+  else {
+    $enabled_countries = array();
   }
 
   $form['countries'] = array(
@@ -38,17 +41,14 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
     ),
   );
 
-  if (!empty($enabled_countries)) {
+  // Per country filter settings.
+  $form['country_filters'] = array(
+    '#prefix' => '<div id="country-filters"><h2>' . t('Filter settings') . '</h2>',
+    '#suffix' => '</div>',
+    '#type' => 'vertical_tabs',
+    '#tree' => TRUE,
+  );
 
-    // Per country filter settings.
-    $form['country_filters'] = array(
-      '#prefix' => '<div id="country-filters"><h2>' . t('Filter settings') . '</h2>',
-      '#suffix' => '</div>',
-      '#type' => 'vertical_tabs',
-      '#tree' => TRUE,
-    );
-
-  }
 
   foreach ($enabled_countries as $country_code) {
 
