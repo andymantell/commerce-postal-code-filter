@@ -20,7 +20,7 @@ function commerce_postal_code_filter_configure($form, &$form_state) {
   if (!empty($form_state['values']['countries'])) {
     $enabled_countries = $form_state['values']['countries'];
   }
-  else if (isset($config['countries'])) {
+  elseif (isset($config['countries'])) {
     $enabled_countries = $config['countries'];
   }
   else {

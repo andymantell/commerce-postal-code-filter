@@ -88,7 +88,7 @@ function commerce_postal_code_filter_delivery_check($form, &$form_state) {
       '#default_value' => NULL,
     );
   }
-  else if (count($config['countries']) > 1) {
+  elseif (count($config['countries']) > 1) {
     $form['country'] = array(
       '#type' => 'select',
       '#title' => t('Country'),
