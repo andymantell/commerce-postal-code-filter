@@ -59,21 +59,15 @@ function commerce_postal_code_filter_block_info() {
  */
 function commerce_postal_code_filter_block_view($delta = '') {
 
-  switch ($delta) {
-
-    case 'delivery-check':
-      return array(
-        'subject' => t('Do we deliver to your area?'),
-        'content' => array(
-          'description' => array(
-            '#markup' => '<p>' . t('Enter your postal code below and check to see if we deliver to your area.') . '</p>',
-          ),
-          'delivery-check-form' => drupal_get_form('commerce_postal_code_filter_delivery_check'),
-        ),
-      );
-
-      break;
-  }
+  return array(
+    'subject' => t('Do we deliver to your area?'),
+    'content' => array(
+      'description' => array(
+        '#markup' => '<p>' . t('Enter your postal code below and check to see if we deliver to your area.') . '</p>',
+      ),
+      'delivery-check-form' => drupal_get_form('commerce_postal_code_filter_delivery_check'),
+    ),
+  );
 
 }
 
