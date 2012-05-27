@@ -6,13 +6,6 @@
  */
 
 /**
- * Implements hook_init().
- */
-function commerce_postal_code_filter_init() {
-  drupal_add_css(drupal_get_path('module', 'commerce_postal_code_filter') . '/commerce_postal_code_filter.css');
-}
-
-/**
  * Implements hook_menu().
  */
 function commerce_postal_code_filter_menu() {
