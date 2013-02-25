@@ -193,7 +193,7 @@ function _commerce_postal_code_filter_postal_code_is_valid($postal_code, $countr
   // We are checking for partial matches, i.e. if the submitted postal code
   // *begins with* the filtered item.
   foreach ($postal_codes as $filtered_item) {
-    if (strpos($postal_code, $filtered_item) !== FALSE) {
+    if (strpos($postal_code, $filtered_item) === 0) {
 
       // We've found a match, if we're blacklisting, return FALSE.
       // If we're whitelisting, return TRUE.
