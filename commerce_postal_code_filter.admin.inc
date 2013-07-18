@@ -116,6 +116,9 @@ function commerce_postal_code_filter_configure_ajax_callback($form, $form_state)
  */
 function commerce_postal_code_filter_configure_submit($form, &$form_state) {
 
+  // Remove "active tab" value from form state.
+  unset($form_state['values']['country_filters']['country_filters__active_tab']);
+
   foreach ($form_state['values']['country_filters'] as &$country_filter) {
 
     // Fetch the filter list from the form state and force it to be uppercase.
@@ -124,10 +127,10 @@ function commerce_postal_code_filter_configure_submit($form, &$form_state) {
     // Remove all whitespace.
     $country_filter['postal_codes'] = preg_replace('/\s+/', '', $country_filter['postal_codes']);
 
-  }
+    // Trim any trailing commas from the list of postcodes
+    $country_filter['postal_codes'] = trim($country_filter['postal_codes'], ',');
 
-  // Remove "active tab" value from form state.
-  unset($form_state['values']['country_filters']['country_filters__active_tab']);
+  }
 
   form_state_values_clean($form_state);
   variable_set('commerce_postal_code_filter_config', $form_state['values']);
