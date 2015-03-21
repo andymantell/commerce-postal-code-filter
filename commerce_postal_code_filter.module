@@ -47,7 +47,7 @@ function commerce_postal_code_filter_block_info() {
 
   $blocks['delivery-check'] = array(
     'info' => t('Commerce Postal Code Filter - Delivery check'),
-    'cache' => DRUPAL_CACHE_GLOBAL,
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   return $blocks;
